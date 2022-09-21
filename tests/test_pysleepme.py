@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.fixture
-def response():
+def response() -> None:
     """Sample pytest fixture.
 
     See more at: http://doc.pytest.org/en/latest/fixture.html
@@ -14,7 +14,7 @@ def response():
     # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
 
 
-def test_content(response):
+def test_content(response) -> None:
     """Sample pytest test function with the pytest fixture as an argument."""
     # from bs4 import BeautifulSoup
     # assert 'GitHub' in BeautifulSoup(response.content).title.string
