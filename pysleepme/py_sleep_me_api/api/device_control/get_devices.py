@@ -10,18 +10,11 @@ from ...types import Response
 def _get_kwargs(
     *,
     client: Client,
-    json_body: list[DeviceListItem],
 ) -> dict[str, Any]:
     url = f"{client.base_url}/devices"
 
     headers: dict[str, str] = client.get_headers()
     cookies: dict[str, Any] = client.get_cookies()
-
-    json_json_body = []
-    for componentsschemas_device_list_item_data in json_body:
-        componentsschemas_device_list_item = componentsschemas_device_list_item_data.to_dict()
-
-        json_json_body.append(componentsschemas_device_list_item)
 
     return {
         "method": "get",
@@ -29,7 +22,6 @@ def _get_kwargs(
         "headers": headers,
         "cookies": cookies,
         "timeout": client.get_timeout(),
-        "json": json_json_body,
     }
 
 
@@ -73,14 +65,10 @@ def _build_response(*, response: httpx.Response) -> Response[Union[Any, list[Dev
 def sync_detailed(
     *,
     client: Client,
-    json_body: list[DeviceListItem],
 ) -> Response[Union[Any, list[DeviceListItem]]]:
     """Gets a list of the user's claimed devices
 
      This endpoint will return a list of claimed devices for a given token.
-
-    Args:
-        json_body (List[DeviceListItem]):
 
     Returns:
         Response[Union[Any, List[DeviceListItem]]]
@@ -88,7 +76,6 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         client=client,
-        json_body=json_body,
     )
 
     response = httpx.request(
@@ -102,14 +89,10 @@ def sync_detailed(
 def sync(
     *,
     client: Client,
-    json_body: list[DeviceListItem],
 ) -> Optional[Union[Any, list[DeviceListItem]]]:
     """Gets a list of the user's claimed devices
 
      This endpoint will return a list of claimed devices for a given token.
-
-    Args:
-        json_body (List[DeviceListItem]):
 
     Returns:
         Response[Union[Any, List[DeviceListItem]]]
@@ -117,21 +100,16 @@ def sync(
 
     return sync_detailed(
         client=client,
-        json_body=json_body,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: Client,
-    json_body: list[DeviceListItem],
 ) -> Response[Union[Any, list[DeviceListItem]]]:
     """Gets a list of the user's claimed devices
 
      This endpoint will return a list of claimed devices for a given token.
-
-    Args:
-        json_body (List[DeviceListItem]):
 
     Returns:
         Response[Union[Any, List[DeviceListItem]]]
@@ -139,7 +117,6 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         client=client,
-        json_body=json_body,
     )
 
     async with httpx.AsyncClient(verify=client.verify_ssl) as _client:
@@ -151,14 +128,10 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: Client,
-    json_body: list[DeviceListItem],
 ) -> Optional[Union[Any, list[DeviceListItem]]]:
     """Gets a list of the user's claimed devices
 
      This endpoint will return a list of claimed devices for a given token.
-
-    Args:
-        json_body (List[DeviceListItem]):
 
     Returns:
         Response[Union[Any, List[DeviceListItem]]]
@@ -167,6 +140,5 @@ async def asyncio(
     return (
         await asyncio_detailed(
             client=client,
-            json_body=json_body,
         )
     ).parsed
