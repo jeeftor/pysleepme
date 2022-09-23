@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 """Tests for `pysleepme` package."""
 import json
+from collections.abc import Generator
 
+import pytest
+import respx
 from httpx import Response
+from respx import MockRouter
 
-from pysleepme.const import GET_DEVICES_URL
+from pysleepme.const import BASE_URL, ENDPOINT_DEVICES
 from pysleepme.pysleepme import PySleepMe
 
 DEVICES_RESPONSE = '''[
@@ -23,7 +27,31 @@ DEVICES_RESPONSE = '''[
         ]
     }
 ]'''
-
+SINGLE_DEVICE_RESPONSE = '''{
+    "about": {
+        "firmware_version": "5.15",
+        "ip_address": "25.26.873.23",
+        "lan_address": "192.168.0.131",
+        "mac_address": "b5:56:12:67:jg:w2",
+        "model": "DP999NA",
+        "serial_number": "6236265923682376276"
+    },
+    "control": {
+        "brightness_level": 100,
+        "display_temperature_unit": "f",
+        "set_temperature_c": 23.5,
+        "set_temperature_f": 74,
+        "thermal_control_status": "active",
+        "time_zone": "America/New_York"
+    },
+    "status": {
+        "is_connected": true,
+        "is_water_low": false,
+        "water_level": 100,
+        "water_temperature_f": 74,
+        "water_temperature_c": 23.5
+    }
+}'''
 
 # @pytest.fixture
 # def response() -> None:
@@ -42,13 +70,39 @@ DEVICES_RESPONSE = '''[
 #     del response
 
 
-# @pytest.fixture(autouse=True)
-# def httpx_mock_devices():
+# @pytest.fixture()
+# def httpx_mock_get_devices():
+#     """Mock HTTPX Calls"""
+#
+#     with respx.mock(base_url=f"{BASE_URL}/{ENDPOINT_DEVICES}") as respx_mock:
+#
+# devices_route = respx.mock.get(f"/{ENDPOINT_DEVICES}", name="get_devices")
+#         devices_route.return_value = Response(200, json=json.loads(DEVICES_RESPONSE))
+#
+#         yield respx_mock
+
+
+@pytest.fixture()
+def mock_get_devices() -> Generator:
+    """Test fixture for devices endpoint."""
+    with respx.mock(base_url=BASE_URL, assert_all_called=False) as respx_mock:
+        devices_route = respx_mock.get(f"/{ENDPOINT_DEVICES}")
+        devices_route.return_value = Response(200, json=json.loads(DEVICES_RESPONSE))
+        yield respx_mock
+
+
+def test_devices_fixture(mock_get_devices: MockRouter) -> None:
+    """Perform test using fixture."""
+    TOKEN = "FAKE_TOKEN"
+    psm = PySleepMe(api_token=TOKEN)
+    devices = psm.get_devices_sync()
+    assert len(devices) == 2
+    assert devices[1].id == 'zx-wagagj21qk222j25525'
 
 
 def test_devices_sync(respx_mock) -> None:  # type: ignore
     """Test the sync get devices call."""
-    respx_mock.get(GET_DEVICES_URL).mock(return_value=Response(200, json=json.loads(DEVICES_RESPONSE)))
+    respx_mock.get(f"{BASE_URL}/{ENDPOINT_DEVICES}").mock(return_value=Response(200, json=json.loads(DEVICES_RESPONSE)))
     TOKEN = "FAKE_TOKEN"
     psm = PySleepMe(api_token=TOKEN)
     devices = psm.get_devices_sync()
