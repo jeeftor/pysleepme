@@ -132,21 +132,6 @@ def test_error_500(mock_get_devices_with_error: MockRouter) -> None:
     assert ServerErrorException == exc_info.type
 
 
-# @pytest.mark.parametrize('status_code', [500])
-#
-# def test_error_404(mock_get_devices_with_error: MockRouter) -> None:
-# """Test for error code 404."""
-#     TOKEN = "FAKE_TOKEN"
-#     psm = PySleepMe(api_token=TOKEN)
-#     assertRaises(ServerErrorException, psm.get_devices_sync())
-#     assert True
-#
-#     with pytest.raises(ServerErrorException) as exc_info:
-#         psm.get_devices_sync()
-#     assert ServerErrorException == exc_info.type
-#     assert True
-
-
 def test_devices_fixture(mock_get_devices: MockRouter) -> None:
     """Perform test using fixture."""
     TOKEN = "FAKE_TOKEN"

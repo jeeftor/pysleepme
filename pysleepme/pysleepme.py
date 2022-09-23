@@ -31,12 +31,17 @@ class PySleepMe:
         else:
             raise get_exception_by_status(response.status_code)
 
+    async def get_devices_async(self) -> list[DeviceListItem]:
+        """Async query for devices."""
+        devices = await get_devices.asyncio(client=self.client)
+        response: Response[list[DeviceListItem]] = await get_devices.asyncio_detailed(client=self.client)
+        if response.status_code == 200:
+            devices = response.parsed
+            return devices or []
+        else:
+            raise get_exception_by_status(response.status_code)
+
     # def get_device_by_id_sync(self, id: str):
     #     """Query for a device."""
     #     device: Status = get_devices_device_id.sync(client=self.client)
     #     response: Response[Status] = get_devices_device_id.sync_detailed(client=self.client)
-
-    async def get_devices_async(self) -> list[DeviceListItem] | None:
-        """Async query for devices."""
-        devices = await get_devices.asyncio(client=self.client)
-        return devices or []
