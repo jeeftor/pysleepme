@@ -67,6 +67,7 @@ repos:
         additional_dependencies:
           - attrs
           - pytest-mypy
+          - pytest-fixture-typecheck
   - repo: 'https://github.com/Lucas-C/pre-commit-hooks-nodejs'
     rev: v1.1.2
     hooks:
