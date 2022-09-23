@@ -36,10 +36,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install poetry tox tox-gh-actions
-
+          poetry install --no-interaction
+      - name: Test with pytest
+        run:  pip install pytest coverage pytest-cov respx &&  pytest --cov=pysleepme --cov-branch --cov-report=xml --cov-report=term-missing tests
       - name: test with tox
-        run:
-          tox
+        run:  tox
 
       - name: list files
         run: ls -l .
