@@ -7,7 +7,8 @@ from pysleepme.py_sleep_me_api import AuthenticatedClient
 from pysleepme.py_sleep_me_api.api.device_control import get_devices
 from pysleepme.py_sleep_me_api.models import DeviceListItem
 
-BASE_URL = "https://api.developer.sleep.me/v1"
+from .const import BASE_URL
+
 _LOGGER = logging.getLogger("__package__")
 
 

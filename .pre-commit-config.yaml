@@ -66,6 +66,7 @@ repos:
         verbose: true
         additional_dependencies:
           - attrs
+          - pytest-mypy
   - repo: 'https://github.com/Lucas-C/pre-commit-hooks-nodejs'
     rev: v1.1.2
     hooks:
