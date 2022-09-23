@@ -9,6 +9,13 @@ from httpx import Response
 from respx import MockRouter
 
 from pysleepme.const import BASE_URL, ENDPOINT_DEVICES
+from pysleepme.exceptions import (
+    BadRequestException,
+    DeviceNotFoundException,
+    ForbiddenException,
+    ServerErrorException,
+    UnauthorizedException,
+)
 from pysleepme.pysleepme import PySleepMe
 
 DEVICES_RESPONSE = '''[
@@ -53,33 +60,14 @@ SINGLE_DEVICE_RESPONSE = '''{
     }
 }'''
 
-# @pytest.fixture
-# def response() -> None:
-#     """Sample pytest fixture.
-#
-#     See more at: http://doc.pytest.org/en/latest/fixture.html
-#     """
-#     # import requests
-#     # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
 
-
-# def test_content(response) -> None:
-#     """Sample pytest test function with the pytest fixture as an argument."""
-#     # from bs4 import BeautifulSoup
-#     # assert 'GitHub' in BeautifulSoup(response.content).title.string
-#     del response
-
-
-# @pytest.fixture()
-# def httpx_mock_get_devices():
-#     """Mock HTTPX Calls"""
-#
-#     with respx.mock(base_url=f"{BASE_URL}/{ENDPOINT_DEVICES}") as respx_mock:
-#
-# devices_route = respx.mock.get(f"/{ENDPOINT_DEVICES}", name="get_devices")
-#         devices_route.return_value = Response(200, json=json.loads(DEVICES_RESPONSE))
-#
-#         yield respx_mock
+@pytest.fixture()
+def mock_get_devices_with_error(status_code: int) -> Generator:
+    """Parameterizable fixture."""
+    with respx.mock(base_url=BASE_URL, assert_all_called=False) as respx_mock:
+        devices_route = respx_mock.get(f"/{ENDPOINT_DEVICES}")
+        devices_route.return_value = Response(status_code)
+        yield respx_mock
 
 
 @pytest.fixture()
@@ -89,6 +77,74 @@ def mock_get_devices() -> Generator:
         devices_route = respx_mock.get(f"/{ENDPOINT_DEVICES}")
         devices_route.return_value = Response(200, json=json.loads(DEVICES_RESPONSE))
         yield respx_mock
+
+
+@pytest.mark.parametrize('status_code', [400])
+def test_error_400(mock_get_devices_with_error: MockRouter) -> None:
+    """Test for error code 400."""
+    TOKEN = "FAKE_TOKEN"
+    psm = PySleepMe(api_token=TOKEN)
+    with pytest.raises(BadRequestException) as exc_info:
+        psm.get_devices_sync()
+    assert BadRequestException == exc_info.type
+    assert True
+
+
+@pytest.mark.parametrize('status_code', [401])
+def test_error_401(mock_get_devices_with_error: MockRouter) -> None:
+    """Test for error code 401."""
+    TOKEN = "FAKE_TOKEN"
+    psm = PySleepMe(api_token=TOKEN)
+    with pytest.raises(UnauthorizedException) as exc_info:
+        psm.get_devices_sync()
+    assert UnauthorizedException == exc_info.type
+    assert True
+
+
+@pytest.mark.parametrize('status_code', [403])
+def test_error_403(mock_get_devices_with_error: MockRouter) -> None:
+    """Test for error code 403."""
+    TOKEN = "FAKE_TOKEN"
+    psm = PySleepMe(api_token=TOKEN)
+    with pytest.raises(ForbiddenException) as exc_info:
+        psm.get_devices_sync()
+    assert ForbiddenException == exc_info.type
+    assert True
+
+
+@pytest.mark.parametrize('status_code', [404])
+def test_error_404(mock_get_devices_with_error: MockRouter) -> None:
+    """Test for error code 404."""
+    TOKEN = "FAKE_TOKEN"
+    psm = PySleepMe(api_token=TOKEN)
+    with pytest.raises(DeviceNotFoundException) as exc_info:
+        psm.get_devices_sync()
+    assert DeviceNotFoundException == exc_info.type
+
+
+@pytest.mark.parametrize('status_code', [500])
+def test_error_500(mock_get_devices_with_error: MockRouter) -> None:
+    """Test for error code 500."""
+    TOKEN = "FAKE_TOKEN"
+    psm = PySleepMe(api_token=TOKEN)
+    with pytest.raises(ServerErrorException) as exc_info:
+        psm.get_devices_sync()
+    assert ServerErrorException == exc_info.type
+
+
+# @pytest.mark.parametrize('status_code', [500])
+#
+# def test_error_404(mock_get_devices_with_error: MockRouter) -> None:
+# """Test for error code 404."""
+#     TOKEN = "FAKE_TOKEN"
+#     psm = PySleepMe(api_token=TOKEN)
+#     assertRaises(ServerErrorException, psm.get_devices_sync())
+#     assert True
+#
+#     with pytest.raises(ServerErrorException) as exc_info:
+#         psm.get_devices_sync()
+#     assert ServerErrorException == exc_info.type
+#     assert True
 
 
 def test_devices_fixture(mock_get_devices: MockRouter) -> None:
