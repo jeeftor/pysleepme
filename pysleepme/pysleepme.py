@@ -5,8 +5,8 @@ import logging
 
 from pysleepme.exceptions import get_exception_by_status
 from pysleepme.py_sleep_me_api import AuthenticatedClient
-from pysleepme.py_sleep_me_api.api.device_control import get_devices
-from pysleepme.py_sleep_me_api.models import DeviceListItem
+from pysleepme.py_sleep_me_api.api.device_control import get_devices, get_devices_device_id
+from pysleepme.py_sleep_me_api.models import DeviceListItem, Status
 
 from .const import BASE_URL
 from .py_sleep_me_api.types import Response
@@ -33,7 +33,6 @@ class PySleepMe:
 
     async def get_devices_async(self) -> list[DeviceListItem]:
         """Async query for devices."""
-        devices = await get_devices.asyncio(client=self.client)
         response: Response[list[DeviceListItem]] = await get_devices.asyncio_detailed(client=self.client)
         if response.status_code == 200:
             devices = response.parsed
@@ -41,7 +40,11 @@ class PySleepMe:
         else:
             raise get_exception_by_status(response.status_code)
 
-    # def get_device_by_id_sync(self, id: str):
-    #     """Query for a device."""
-    #     device: Status = get_devices_device_id.sync(client=self.client)
-    #     response: Response[Status] = get_devices_device_id.sync_detailed(client=self.client)
+    def get_device_by_id_sync(self, device_id: str) -> Status | None:
+        """Query for a device."""
+        # device: Status = get_devices_device_id.sync(device_id=device_id, client=self.client)
+        response: Response[Status] = get_devices_device_id.sync_detailed(device_id=device_id, client=self.client)
+        if response.status_code == 200:
+            return response.parsed
+        else:
+            raise get_exception_by_status(response.status_code)

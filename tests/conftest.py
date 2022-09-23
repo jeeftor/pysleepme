@@ -54,16 +54,38 @@ SINGLE_DEVICE_RESPONSE = '''{
 @pytest.fixture()
 def mock_get_devices_with_error(status_code: int) -> Generator:
     """Parameterizable fixture."""
-    with respx.mock(base_url=BASE_URL, assert_all_called=False) as respx_mock:
-        devices_route = respx_mock.get(f"/{ENDPOINT_DEVICES}")
+    with respx.mock(base_url=BASE_URL, assert_all_called=False) as mock:
+        devices_route = mock.get(f"/{ENDPOINT_DEVICES}")
         devices_route.return_value = Response(status_code)
-        yield respx_mock
+        yield mock
 
 
 @pytest.fixture()
 def mock_get_devices() -> Generator:
     """Test fixture for devices endpoint."""
-    with respx.mock(base_url=BASE_URL, assert_all_called=False) as respx_mock:
-        devices_route = respx_mock.get(f"/{ENDPOINT_DEVICES}")
+    with respx.mock(base_url=BASE_URL, assert_all_called=True) as mock:
+        devices_route = mock.get(f"/{ENDPOINT_DEVICES}")
         devices_route.return_value = Response(200, json=json.loads(DEVICES_RESPONSE))
-        yield respx_mock
+        yield mock
+
+
+@pytest.fixture()
+def mock_get_device_by_id(device_id: str) -> Generator:
+    """Paramaterized get device by id function."""
+    with respx.mock(base_url=BASE_URL, assert_all_called=False) as mock:
+
+        device_by_id_route = mock.get(f"/{ENDPOINT_DEVICES}/{device_id}")
+        device_by_id_route.return_value = Response(200, json=json.loads(SINGLE_DEVICE_RESPONSE))
+
+        yield mock
+
+
+@pytest.fixture()
+def mock_get_device_by_id_with_error(device_id: str) -> Generator:
+    """Paramaterized get device by id function."""
+    with respx.mock(base_url=BASE_URL, assert_all_called=False) as mock:
+
+        device_by_id_route = mock.get(f"/{ENDPOINT_DEVICES}/{device_id}")
+        device_by_id_route.return_value = Response(500, json=json.loads(SINGLE_DEVICE_RESPONSE))
+
+        yield mock
