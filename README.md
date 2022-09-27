@@ -16,6 +16,13 @@ Python [Sleep Me API](https://docs.developer.sleep.me/api/) Wrapper for Home Ass
 * PyPI: <https://pypi.org/project/pysleepme/>
 * Free software: MIT
 
+# TODO
+
+- [ ] - Have them actually ship my order
+- [x] - Code API to query devices
+- [ ] - Code API Calls for specific device
+- [ ] - Add control logic
+
 ## Background
 
 The SleepMe API documentation is available [here](https://docs.developer.sleep.me/api/). This library uses [openapi-python-client](https://www.google.com/search?client=safari&rls=en&q=openapi-python-client&ie=UTF-8&oe=UTF-8) with a slightly modified version of the API (there is an issue with one of the endpoint names) to create an OpenAPI 3.0 client.
