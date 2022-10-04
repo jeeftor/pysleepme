@@ -42,8 +42,17 @@ class PySleepMe:
 
     def get_device_by_id_sync(self, device_id: str) -> Status | None:
         """Query for a device."""
-        # device: Status = get_devices_device_id.sync(device_id=device_id, client=self.client)
         response: Response[Status] = get_devices_device_id.sync_detailed(device_id=device_id, client=self.client)
+        if response.status_code == 200:
+            return response.parsed
+        else:
+            raise get_exception_by_status(response.status_code)
+
+    async def get_device_by_id_async(self, device_id: str) -> Status | None:
+        """Query for a device."""
+        response: Response[Status] = await get_devices_device_id.asyncio_detailed(
+            device_id=device_id, client=self.client
+        )
         if response.status_code == 200:
             return response.parsed
         else:

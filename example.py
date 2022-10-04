@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from pysleepme.py_sleep_me_api.models import DeviceListItem
 from pysleepme.pysleepme import PySleepMe
 
 token: str | None = os.getenv('API_TOKEN')
@@ -18,12 +19,15 @@ psm = PySleepMe(api_token=token)
 
 async def async_main() -> None:
     """Async main function."""
-    await psm.get_devices_async()
+    d = await psm.get_devices_async()
+    print(d)
 
 
 def sync_main() -> None:
     """Sync main function."""
-    psm.get_devices_sync()
+    d: list[DeviceListItem] = psm.get_devices_sync()
+    info = psm.get_device_by_id_sync(d[0].id)
+    print(info)
 
 
 if __name__ == "__main__":
