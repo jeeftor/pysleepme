@@ -1,5 +1,10 @@
 # Changelog
 
-## 0.1.0 (2022-09-13)
 
-* First release on PyPI.
+## 0.1.1 (2020-10-4)
+### Added
+- Some text in the change log
+### Changed
+- Nothing
+### Removed
+- Nothing either
