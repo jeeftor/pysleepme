@@ -35,18 +35,19 @@ jobs:
         run:
           env
 
-      - name: Print changelog
-        run:
-          cat ./CHANGELOG.md
+      # - name: Print changelog
+      #   run:
+      #     cat ./CHANGELOG.md
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
 
-      - name: Get Changelog Entry
-        id: changelog_reader
-        uses: mindsers/changelog-reader-action@v2
-        with:
-          validation_depth: 10
-          version: ${{ steps.tag_name.outputs.current_version }}
-          path: ./CHANGELOG.md
+      # - name: Get Changelog Entry
+      #   id: changelog_reader
+      #   uses: mindsers/changelog-reader-action@v2
+      #   with:
+      #     validation_depth: 10
+      #     validation_level: warn
+      #     version: ${{ steps.tag_name.outputs.current_version }}
+      #     path: ./CHANGELOG.md
 
       - uses: actions/setup-python@v2
         with:
@@ -82,7 +83,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          body: ${{ steps.changelog_reader.outputs.changes }}
+          # body: ${{ steps.changelog_reader.outputs.changes }}
+          body: "Auto release from CI"
           files: dist/*.whl
           draft: false
           prerelease: false
