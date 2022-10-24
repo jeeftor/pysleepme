@@ -1,4 +1,6 @@
-# PySleepMe
+# PySleepMe (Works but abandoned) 
+
+I got rid of my Dock Pro - so I don't really care aobut this project so much :)
 
 
 [![pypi](https://img.shields.io/pypi/v/pysleepme.svg)](https://pypi.org/project/pysleepme/)
