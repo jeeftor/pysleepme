@@ -1,4 +1,4 @@
-# PySleepMe (Works but abandoned) 
+# PySleepMe (Works but no longer maintained) 
 
 I got rid of my Dock Pro - so I don't really care aobut this project so much :)
 
